@@ -224,13 +224,15 @@ virtual const char* Description() //required
     if(p)
       {
         //Do a similarity search
+    for(unsigned i=0;i<patternMols.size();++i) {
         multimap<double, unsigned int> SeekposMap;
         string txt=p;
+        clog << "JJ patternMols " << patternMols.size() << " " << i << endl << flush;
         if(txt.find('.')==string::npos)
           {
             //Finds n molecules with largest Tanimoto
             int n = atoi(p);
-            fs.FindSimilar(&patternMols[0], SeekposMap, n);
+            fs.FindSimilar(&patternMols[i], SeekposMap, n);
           }
         else
           {
@@ -241,7 +243,7 @@ virtual const char* Description() //required
               MaxTani = atof( txt.substr( pos + 1 ).c_str() );
             }
             double MinTani = atof( txt.substr( 0, pos ).c_str() );
-            fs.FindSimilar(&patternMols[0], SeekposMap, MinTani, MaxTani);
+            fs.FindSimilar(&patternMols[i], SeekposMap, MinTani, MaxTani);
           }
 
         //Don't want to filter through SMARTS filter
@@ -265,11 +267,12 @@ virtual const char* Description() //required
 
               }
             pConv->SetOneObjectOnly();
-            if(itr != --SeekposMap.rend())
+//            if(itr != --SeekposMap.rend())
               pConv->SetMoreFilesToCome();//so that not seen as last on output
             pConv->Convert(NULL,NULL);
           }
       }
+    }
 
     else
     {
