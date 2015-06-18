@@ -87,19 +87,28 @@ public:
   {
     ///If used for two vectors, vec1 and vec2, call as Tanimoto(vec1, &vec2[0]);
     int andbits=0, orbits=0;
-    unsigned int i;
-    for (i=0;i<vec1.size();i+=2)
+    unsigned int i=0;
+#if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)
+    for (;i<2*(vec1.size()/2);i+=2)
     {
       long long int andfp = *((long long int*) &vec1[i]) & *((long long int *) &p2[i]);
       long long int orfp = *((long long int*) &vec1[i]) | *((long long int *) &p2[i]);
+      andbits += __builtin_popcountll(andfp);
+      orbits += __builtin_popcountll(orfp);
+    }
+#endif
+    for (;i<vec1.size();i++)
+    {
+      int andfp = vec1[i] & p2[i];
+      int orfp = vec1[i] | p2[i];
       // Count bits
       /* GCC 3.4 supports a "population count" builtin, which on many targets is
          implemented with a single instruction.  There is a fallback definition
          in libgcc in case a target does not have one, which should be just as
          good as the static function below.  */
 #if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)
-      andbits += __builtin_popcountll(andfp);
-      orbits += __builtin_popcountll(orfp);
+      andbits += __builtin_popcount(andfp);
+      orbits += __builtin_popcount(orfp);
 #else
       for(;andfp;andfp=andfp<<1)
         if(andfp<0) ++andbits;
