@@ -1,4 +1,4 @@
-/**********************************************************************
+/********************************************************************** 
 mol.cpp - Handle molecules.
 
 Copyright (C) 1998-2001 by OpenEye Scientific Software, Inc.
@@ -1933,7 +1933,7 @@ namespace OpenBabel
                           "Ran OpenBabel::DeleteHydrogens -- nonpolar",
                           obAuditMsg);
 
-    
+
     OBAtomClassData *pac = NULL;
     if (this->HasData("Atom Class"))
       pac = static_cast<OBAtomClassData*>(this->GetData("Atom Class"));
@@ -2140,9 +2140,15 @@ namespace OpenBabel
                             "Ran OpenBabel::AddHydrogens -- nonpolar only", obAuditMsg);
 
     // Make sure we have conformers (PR#1665519)
-    if (!_vconf.empty()) {
-      BeginModify();
-      EndModify();
+    if (!_vconf.empty() && !Empty() && !_mod)
+    {
+      if(!_c) _c = _vconf[0];
+      OBAtom *atom;
+      vector<OBAtom*>::iterator i;
+      for (atom = BeginAtom(i); atom; atom = NextAtom(i))
+      {
+        atom->SetVector();
+      }
     }
 
     SetHydrogensAdded(); // This must come after EndModify() as EndModify() wipes the flags
@@ -3628,7 +3634,8 @@ namespace OpenBabel
         _vconf.resize(_vconf.size()-1);
       }
 
-    delete [] c;
+    if (_c != NULL)
+      delete [] c;
   }
 
   /*! This method uses bond angles and geometries from current
