@@ -43,8 +43,9 @@ class PubChemJSONFormat : public OBMoleculeFormat
     {
       return
       "PubChem JSON\n"
-      "This is the format returned by the PubChem PUG REST service when\n"
-      "requesting JSON. It closely resembles PubChem's internal data structure.\n\n"
+      "The JSON format returned by the PubChem PUG REST service\n\n"
+
+      "The data contained in this format closely resembles PubChem's internal data structure.\n\n"
       
       "Read Options, e.g. -as\n"
       " s  disable stereo perception and just read stereo information from input\n\n"
@@ -171,12 +172,7 @@ class PubChemJSONFormat : public OBMoleculeFormat
         if (elementstring == "a" || elementstring == "d" || elementstring == "r" || elementstring == "lp") {
           patom->SetAtomicNum(0);
         } else {
-          int isotope = 0;
-          patom->SetAtomicNum(etab.GetAtomicNum(elements[i].asString(), isotope));
-          if (isotope != 0) {
-            // isotope gets set for e.g. 'D' or 'T' symbol
-            patom->SetIsotope(isotope);
-          }
+          patom->SetAtomicNum(OBElements::GetAtomicNum(elements[i].asCString()));
         }
         
       } else {
@@ -537,14 +533,6 @@ class PubChemJSONFormat : public OBMoleculeFormat
     }
 
     PerceiveStereo(pmol);
-    
-    // Kekulize any untyped aromatic bonds (5)
-    FOR_BONDS_OF_MOL(bond, pmol) {
-      if (bond->GetBondOrder() == 5) {
-        pmol->Kekulize();
-        break;
-      }
-    }
 
     // Set up all the stereochemistry information
     set<OBBond*> unspec_ctstereo = GetUnspecifiedCisTrans(*pmol);
@@ -570,7 +558,7 @@ class PubChemJSONFormat : public OBMoleculeFormat
       doc["atoms"]["aid"].append(id);
       // Element
       if (patom->GetAtomicNum()) {
-        string el = etab.GetSymbol(patom->GetAtomicNum());
+        string el = OBElements::GetSymbol(patom->GetAtomicNum());
         std::transform(el.begin(), el.end(), el.begin(), ::tolower);
         doc["atoms"]["element"].append(el);
       } else {
