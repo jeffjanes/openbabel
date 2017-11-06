@@ -87,8 +87,17 @@ public:
   {
     ///If used for two vectors, vec1 and vec2, call as Tanimoto(vec1, &vec2[0]);
     int andbits=0, orbits=0;
-    unsigned int i;
-    for (i=0;i<vec1.size();++i)
+    unsigned int i=0;
+#if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)
+    for (;i<2*(vec1.size()/2);i+=2)
+    {
+      long long int andfp = *((long long int*) &vec1[i]) & *((long long int *) &p2[i]);
+      long long int orfp = *((long long int*) &vec1[i]) | *((long long int *) &p2[i]);
+      andbits += __builtin_popcountll(andfp);
+      orbits += __builtin_popcountll(orfp);
+    }
+#endif
+    for (;i<vec1.size();i++)
     {
       int andfp = vec1[i] & p2[i];
       int orfp = vec1[i] | p2[i];

@@ -106,18 +106,18 @@ namespace OpenBabel
     if(vec1.size()!=vec2.size())
       return -1; //different number of bits
     int andbits=0, orbits=0;
-    for (unsigned i=0;i<vec1.size();++i)
+    for (unsigned i=0;i<vec1.size();i+=2)
       {
-        int andfp = vec1[i] & vec2[i];
-        int orfp = vec1[i] | vec2[i];
+        long long int andfp = *((long long int*) &vec1[i]) & *((long long int *) &vec2[i]);
+        long long int orfp = *((long long int*) &vec1[i]) | *((long long int *) &vec2[i]);
         //Count bits
       /* GCC 3.4 supports a "population count" builtin, which on many targets is
          implemented with a single instruction.  There is a fallback definition
          in libgcc in case a target does not have one, which should be just as
          good as the static function below.  */
 #if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)
-        andbits += __builtin_popcount(andfp);
-        orbits += __builtin_popcount(orfp);
+        andbits += __builtin_popcountll(andfp);
+        orbits += __builtin_popcountll(orfp);
 #else
         for(;andfp;andfp=andfp<<1)
           if(andfp<0) ++andbits;
