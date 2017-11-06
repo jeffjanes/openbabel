@@ -1,19 +1,22 @@
 # Open Babel data files
 
 set(to_install
-    aromatic.txt
     atomization-energies.txt
     atomtyp.txt
     babel_povray3.inc
     bondtyp.txt
-    element.txt
+    eem.txt
+    eem2015ba.txt
+    eem2015bm.txt
+    eem2015bn.txt
+    eem2015ha.txt
+    eem2015hm.txt
+    eem2015hn.txt
     eqeqIonizations.txt
     fragments.txt
     gaff.dat
     gaff.prm
     ghemical.prm
-    isotope-small.txt
-    isotope.txt
     logp.txt
     MACCS.txt
     mmff94.ff

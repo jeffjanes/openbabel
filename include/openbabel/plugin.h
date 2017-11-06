@@ -124,6 +124,9 @@ public:
   ///Returns the map of the subtypes
   virtual PluginMapType& GetMap() const =0;
 
+  ///Load all plugins (formats, fingerprints, forcefields etc.)
+  static void LoadAllPlugins();
+
 protected:
   ///\brief Returns a reference to the map of the plugin types.
   /// Is a function rather than a static member variable to avoid initialization problems.
@@ -135,9 +138,6 @@ protected:
 
   ///Keep a record if all plugins have been loaded
   static int AllPluginsLoaded;
-
-  ///Load all plugins (formats, fingerprints, forcefields etc.)
-  static void LoadAllPlugins();
 
   ///Returns the map of a particular plugin type, e.g. GetMapType("fingerprints")
   static PluginMapType& GetTypeMap(const char* PluginID);
@@ -407,6 +407,7 @@ public:
   OB_STATIC_PLUGIN(DlpolyConfigFormat, theDlpolyConfigFormat)
   OB_STATIC_PLUGIN(DlpolyHISTORYFormat, theDlpolyHISTORYFormat)
   OB_STATIC_PLUGIN(DMolFormat, theDMolFormat)
+  OB_STATIC_PLUGIN(EXYZFormat, theEXYZFormat)
   OB_STATIC_PLUGIN(FASTAFormat, theFASTAFormat)
   OB_STATIC_PLUGIN(FastSearchFormat, theFastSearchFormat)
   OB_STATIC_PLUGIN(FCHKFormat, theFCHKFormat)
@@ -454,6 +455,8 @@ public:
   OB_STATIC_PLUGIN(NWChemOutputFormat, theNWChemOutputFormat)
   OB_STATIC_PLUGIN(NWChemInputFormat, theNWChemInputFormat)
   OB_STATIC_PLUGIN(OBOpenDXCubeFormat, theOpenDXCubeFormat)
+  OB_STATIC_PLUGIN(OrcaOutputFormat, theOrcaOutputFormat)
+  OB_STATIC_PLUGIN(OrcaInputFormat, theOrcaInputFormat)
   OB_STATIC_PLUGIN(OutputFormat, theOutputFormat)
   OB_STATIC_PLUGIN(PCModelFormat, thePCModelFormat)
   OB_STATIC_PLUGIN(PDBFormat, thePDBFormat)
@@ -532,6 +535,12 @@ public:
   OB_STATIC_PLUGIN(fingerprint2, thefingerprint2)
   OB_STATIC_PLUGIN(PatternFP, FP3PatternFP)
   OB_STATIC_PLUGIN(PatternFP, FP4PatternFP)
+  OB_STATIC_PLUGIN(fingerprintECFP, theECFP0)
+  OB_STATIC_PLUGIN(fingerprintECFP, theECFP2)
+  OB_STATIC_PLUGIN(fingerprintECFP, theECFP4)
+  OB_STATIC_PLUGIN(fingerprintECFP, theECFP6)
+  OB_STATIC_PLUGIN(fingerprintECFP, theECFP8)
+  OB_STATIC_PLUGIN(fingerprintECFP, theECFP10)
 
   // forcefields
   OB_STATIC_PLUGIN(OBForceFieldGaff, theForceFieldGaff)
@@ -545,7 +554,7 @@ public:
   OB_STATIC_PLUGIN(OpAddPolarH, theOpAddPolarH)
   OB_STATIC_PLUGIN(OpAddNonPolarH, theOpAddNonPolarH)
   OB_STATIC_PLUGIN(OpChangeCell, theOpChangeCell)
-  OB_STATIC_PLUGIN(OpCanonical, theOpCanonical)          
+  OB_STATIC_PLUGIN(OpCanonical, theOpCanonical)
   OB_STATIC_PLUGIN(OpDelPolarH, theOpDelPolarH)
   OB_STATIC_PLUGIN(OpDelNonPolarH, theOpDelNonPolarH)
   OB_STATIC_PLUGIN(OpFillUC, theOpFillUC)
@@ -569,6 +578,7 @@ public:
   OB_STATIC_PLUGIN(GasteigerCharges, theGasteigerCharges)
   OB_STATIC_PLUGIN(MMFF94Charges, theMMFF94Charges)
   OB_STATIC_PLUGIN(NoCharges, theNoCharges)
+  OB_STATIC_PLUGIN(FromFileCharges, theFromFileCharges)
 #ifdef HAVE_EIGEN
   OB_STATIC_PLUGIN(QEqCharges, theQEqCharges)
   OB_STATIC_PLUGIN(QTPIECharges, theQTPIECharges)

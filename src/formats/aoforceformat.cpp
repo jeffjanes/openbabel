@@ -25,16 +25,15 @@ class AoforceFormat : public OBMoleculeFormat {
 
     virtual const char* Description() {  // required
       return
-          "Aoforce output format\n"
-          "Calculation of vibrational frequencies and vibrational spectra\n"
-          "using the aoforce module from TurboMole.\n";
+          "Turbomole AOFORCE output format\n"
+          "Read vibrational frequencies and intensities\n";
     }
 
     virtual const char* SpecificationURL() {
       return "http://www.turbomole-gmbh.com/manuals/";
     }
 
-    virtual unsigned int Flags() { return READONEONLY; }
+    virtual unsigned int Flags() { return READONEONLY | NOTWRITABLE; }
 
     virtual bool ReadMolecule(OBBase* pOb, OBConversion* pConv);
 };
@@ -66,11 +65,10 @@ bool AoforceFormat::ReadMolecule(OBBase* pOb, OBConversion* pConv) {
                        atof(vs[1].c_str()),
                        atof(vs[2].c_str()));
         coords *= 0.529177249;  // Bohr to Angstrom
-        int iso;
         atom->SetVector(coords);
-        atom->SetAtomicNum(etab.GetAtomicNum(vs[3], iso));
+        atom->SetAtomicNum(OBElements::GetAtomicNum(vs[3].c_str()));
         atom->SetPartialCharge(atof(vs[5].c_str()));
-        atom->SetIsotope(atof(vs[7].c_str()));
+        atom->SetIsotope(atoi(vs[7].c_str()));
       }
     } else if (line.find("   mode   ") != std::string::npos) {
       // Normal modes and vibrational frequencies
