@@ -65,12 +65,22 @@ namespace OpenBabel
       {
         return
           "Point cloud on VDW surface\n"
-          "Generates a point cloud on the VDW surface around the molecule\n"
-          "Output is a list of {x,y,z} tuples in Angstrom (in xyz format if -x specified)\n\n"
-          "Write Options, e.g. -xr\n"
-          "  r comma-separated list of VDW radius multiples (Angstrom) (default 1.0)\n"
-          "  d comma-separated list of point densities (Angstom^2)     (default 1.0)\n"
-          "  p probe radius in Angstrom (default 0.0)\n"
+          "Generates a point cloud on the VDW surface around the molecule\n\n"
+
+          "The surface location is calculated by adding the probe atom radius\n"
+          "(if specified) to the Van der Waal radius of the particular atom multipled\n"
+          "by the specified multiple (1.0 if unspecified)."
+
+          "Output is a list of {x,y,z} tuples in Angstrom. Alternatively, if the ``x``\n"
+          "option is specified, the :ref:`XYZ_cartesian_coordinates_format` is used\n"
+          "instead.\n\n"
+
+          "Write Options, e.g. -xx\n"
+          "  r <radii> create a surface for each VDS radius (default 1.0)\n"
+          "        A comma-separated list of VDW radius multiples\n"
+          "  d <densities> for each surface, specify the point density (default 1.0 Angstrom^2)\n"
+          "        A comma-separated list of densities\n"
+          "  p <radius> radius of the probe atom in Angstrom (default 0.0)\n"
           "  x output in xyz format\n\n";
       }
 
@@ -130,7 +140,7 @@ namespace OpenBabel
   bool conditional_add( vector<vector3> &list, vector3 point, double density_r ) {
 
     double density_r2 = density_r * density_r;
-    for( std::vector<vector3>::iterator it = list.begin(); it != list.end(); it++ ) {
+    for( std::vector<vector3>::iterator it = list.begin(); it != list.end(); ++it ) {
       vector3 r = *it - point;
       double r2 = dot(r,r);
       if( r2 < density_r2 ) {
@@ -219,7 +229,7 @@ namespace OpenBabel
         // on the atom-centred spherical surface r_VDW * radius_multiplier
         // ensuring each point is >= density_r from all others
         const double* c = a->GetCoordinate();
-        double vdwrad   = probe_radius + ( etab.GetVdwRad( a->GetAtomicNum() ) * radius_mult );
+        double vdwrad   = probe_radius + ( OBElements::GetVdwRad( a->GetAtomicNum() ) * radius_mult );
 
         // estimate # of points by dividing area of VDW sphere
         // by the required density
@@ -235,12 +245,12 @@ namespace OpenBabel
 
         // now cull any points on that surface that are within r_VDW * radius_multiplier
         // of any other atom
-        for( std::vector< vector3 >::iterator it = pt.begin(); it != pt.end(); it++ ) {
+        for( std::vector< vector3 >::iterator it = pt.begin(); it != pt.end(); ++it ) {
           bool exclude = false;
           FOR_ATOMS_OF_MOL( a, *pmol )
           {
             const double* c = a->GetCoordinate();
-            double vdwrad   =  probe_radius + ( etab.GetVdwRad( a->GetAtomicNum() ) * radius_mult );
+            double vdwrad   =  probe_radius + ( OBElements::GetVdwRad( a->GetAtomicNum() ) * radius_mult );
             vdwrad *= vdwrad;
             vector3 r = *it - vector3( c[0], c[1], c[2] );
             double r2 = r[0]*r[0] + r[1]*r[1] + r[2] * r[2];
@@ -258,7 +268,7 @@ namespace OpenBabel
       os << filtered_points.size() << "\n\n";
     }
 
-    for( std::vector<vector3>::iterator it2 = filtered_points.begin(); it2 != filtered_points.end(); it2++ ) {
+    for( std::vector<vector3>::iterator it2 = filtered_points.begin(); it2 != filtered_points.end(); ++it2 ) {
       if( format_xyz ) {
         os << "Xx\t";
       }
